@@ -1,0 +1,6 @@
+gistry:
+  ports:
+  - port: 5000
+    targetPort: 5000
+  type: ClusterIP
+kubernetesClusterDomain: cluster.local

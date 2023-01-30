@@ -1,0 +1,52 @@
+# sh -x commands.sh
++ docker run --rm --entrypoint htpasswd registry:2.6.2 -Bbn myuser mypasswd
++ openssl req -x509 -newkey rsa:4096 -days 365 -nodes -sha256 -keyout registry/certs/tls.key -out registry/certs/tls.crt -subj /CN=docker-registry -addext 'subjectAltName = DNS:docker-registry'
+Generating a 4096 bit RSA private key
+.......................................................++++
+......++++
+writing new private key to 'registry/certs/tls.key'
+-----
++ kubectl create secret tls certs-secret --cert=registry/certs/tls.crt --key=registry/certs/tls.key
+error: failed to create secret secrets "certs-secret" already exists
++ kubectl create secret generic auth-secret --from-file=registry/auth/htpasswd
+error: failed to create secret secrets "auth-secret" already exists
++ kubectl apply -f registry/pvc.yaml
+persistentvolume/docker-repo-pv unchanged
+persistentvolumeclaim/docker-repo-pvc unchanged
++ kubectl apply -f registry/registry.yaml
+pod/docker-registry-pod configured
+service/docker-registry unchanged
++ cd app
++ docker build -t registry/python-web .
+Sending build context to Docker daemon  4.608kB
+Step 1/7 : FROM python:3.9.2
+ ---> 587b1bc803b3
+Step 2/7 : WORKDIR app
+ ---> Using cache
+ ---> ad54b45bdb07
+Step 3/7 : COPY requirements.txt requirements.txt
+ ---> Using cache
+ ---> d9d590731c52
+Step 4/7 : RUN pip3 install -r requirements.txt
+ ---> Using cache
+ ---> 7ce060160938
+Step 5/7 : COPY . .
+ ---> Using cache
+ ---> de09abe99935
+Step 6/7 : EXPOSE 80
+ ---> Using cache
+ ---> fbb1b198e258
+Step 7/7 : CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0","-p","8000"]
+ ---> Using cache
+ ---> 44e0ee18fcfc
+Successfully built 44e0ee18fcfc
+Successfully tagged registry/python-web:latest
+
+Use 'docker scan' to run Snyk tests against images to find vulnerabilities and learn how to fix them
++ cd ../web
++ helm install --generate-name .
+NAME: chart-1675118271
+LAST DEPLOYED: Mon Jan 30 23:37:53 2023
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1

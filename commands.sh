@@ -26,4 +26,4 @@ cd app && docker build -t private-registry/python-web .
 
 echo "environment: $env"
 # running the app using helm
-cd ../web && helm upgrade -v values-"$1".yml --generate-name .
+cd ../web && helm install -f values-"$1".yaml --generate-name .

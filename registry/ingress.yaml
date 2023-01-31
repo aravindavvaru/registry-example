@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: private-registry
+  namespace: kube-system
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 2000m 
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: private-registry
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              serviceName: private-registry
+              servicePort: 5000

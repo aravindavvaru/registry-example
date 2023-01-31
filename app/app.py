@@ -1,5 +1,5 @@
 from flask import Flask
-from kubernetes import client, config
+import sys
 
 app = Flask(__name__)
 
@@ -13,11 +13,12 @@ def get_namespace():
 def main_root():
     text = "<h2>Hello "
     try:
-        text += get_namespace() 
+        text += app.config.get('environment') 
     except:
-        print("not running in kubernetes")
+        print("no enivonment variable passed")
     text += " Kube </h2>" 
     return text
 
 if __name__ == "__main__":
+    app.config['environment'] = sys.argv[1]
     app.run(host="0.0.0.0", port=8000)
